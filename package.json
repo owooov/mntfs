@@ -1,0 +1,26 @@
+{
+  "name": "mntfs",
+  "version": "0.1.0",
+  "description": "Mntfs is a command-line tool based on macFUSE driver for mounting ntfs disks",
+  "main": "index.cjs",
+  "scripts": {
+    "dev": "node ./src/index.cjs",
+    "pkg": "pkg -t node18-macos ./src/index.cjs -o ./mntfs/mntfs"
+  },
+  "module": "cjs",
+  "keywords": [
+    "ntfs",
+    "macFUSE",
+    "mount",
+    "ntfs-3g"
+  ],
+  "author": "owooov",
+  "license": "MIT",
+  "dependencies": {
+    "@inquirer/prompts": "^4.3.1",
+    "inquirer": "^9.2.17"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  }
+}
