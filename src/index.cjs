@@ -28,7 +28,6 @@ try {
 
         config.password = encrypt_aes_128_cbc(passwd, kv, kv);
         config.kv = kv.toString("hex");
-        console.log(config);
         const ok = initConfiguration(config);
         if (ok) {
           console.log("init success");

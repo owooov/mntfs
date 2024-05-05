@@ -1,6 +1,6 @@
 const config = {
   name: "mntfs tool config",
-  version: "0.1.0",
+  version: "0.1.1",
   description: "Mntfs is a command-line tool based on macFUSE driver for mounting ntfs disks",
   password: "",
   help: `mntfs - Mntfs is a command-line tool based on macFUSE driver for mounting ntfs disks
