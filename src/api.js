@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const { execFileSync: exec, execSync } = require("child_process");
 const fs = require("node:fs");
 const path = require("path");
@@ -50,7 +51,9 @@ exports.execMount = ntfs => {
     const path = VOLUME_PREFIX + ntfs.name;
     let cmdPrefix = `/usr/bin/sudo`;
     if (this.isInited()) {
-      const password = this.readConfigration().password;
+      const { password: encrypted, kv } = this.readConfigration();
+      const kvB = Buffer.from(kv, "hex");
+      const password = this.decrypt_aes_128_cbc(encrypted, kvB, kvB);
       if (password) {
         cmdPrefix = `echo ${password} | /usr/bin/sudo -S`;
       }
@@ -165,8 +168,29 @@ exports.testPassword = passwd => {
   try {
     const cmd = `echo ${passwd} | sudo -S echo testPasswd`;
     const stdout = execSync(cmd);
+
     return true;
   } catch (error) {
+    // console.log(error);
     return false;
   }
+};
+
+exports.encrypt_aes_128_cbc = (plaintext, key, iv) => {
+  const cipher = crypto.createCipheriv("aes-128-cbc", key, iv);
+  let encrypted = cipher.update(plaintext, "utf8");
+  encrypted = Buffer.concat([encrypted, cipher.final()]);
+  return encrypted.toString("hex");
+};
+
+exports.decrypt_aes_128_cbc = (encrypted, key, iv) => {
+  const encryptedBuffer = Buffer.from(encrypted, "hex");
+  const decipher = crypto.createDecipheriv("aes-128-cbc", key, iv);
+  let decrypted = decipher.update(encryptedBuffer);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  return decrypted.toString("utf8");
+};
+
+exports.simpleKV = password => {
+  return Buffer.from(crypto.createHash("md5").update(password).digest("hex"), "hex");
 };

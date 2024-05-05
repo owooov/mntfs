@@ -8,6 +8,8 @@ const {
   execUnMount,
   initConfiguration,
   testPassword,
+  encrypt_aes_128_cbc,
+  simpleKV,
 } = require("./api");
 const ntfsList = getNTFSList();
 process.on("uncaughtException", error => {
@@ -20,8 +22,13 @@ try {
     if (/-init|init/.test(args[0])) {
       //todo init
       const passwd = await password({ message: "Enter the sudo user password:" });
-      config.password = passwd;
+
       if (testPassword(passwd)) {
+        const kv = simpleKV(passwd);
+
+        config.password = encrypt_aes_128_cbc(passwd, kv, kv);
+        config.kv = kv.toString("hex");
+        console.log(config);
         const ok = initConfiguration(config);
         if (ok) {
           console.log("init success");
@@ -73,5 +80,5 @@ try {
     }
   })();
 } catch (err) {
-  // console.log(err);
+  console.log(err);
 }
